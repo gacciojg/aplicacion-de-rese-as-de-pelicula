@@ -1,0 +1,55 @@
+﻿@page "/Index"
+@inject PeliculaService PeliculaService
+@inject NavigationManager NavigationManager
+
+<h3>Nueva Pelicula</h3>
+<br />
+
+<label>Titulo</label>
+<input type="text" @bind=miPelicula.Titulo class="form-control" />
+
+<label>Genero</label>
+<select @bind=miPelicula.Genero class="form-select" aria-label="Default select example">
+	<option value="">Seleccione un genero</option>
+	<option value="Accion">Accion</option>
+	<option value="Comedia">Comedia</option>
+	<option value="Drama">Drama</option>
+</select>
+
+<label>Año</label>
+<input type="number" @bind=miPelicula.Anio class="form-control" />
+
+<label>Descripcion</label>
+<input type="text" @bind=miPelicula.Descripcion class="form-control" />
+<br />
+<button class="btn btn-primary" @onclick="CrearPelicula">Agregar Pelicula</button>
+<!--boton volver menu-->
+<button class="btn btn-secondary ms-2" @onclick="VolverAlMenu">volver al menu</button>
+
+<p>@mensaje</p>
+
+@code {
+	Pelicula miPelicula = new Pelicula();
+	string mensaje;
+
+	public async Task CrearPelicula()
+	{
+		try
+		{
+			await PeliculaService.AgregarPeliculaAsync(miPelicula);
+			mensaje = "pelicula guardada";
+			miPelicula = new Pelicula();
+		}
+		catch(Exception ex)
+		{
+			mensaje = $"error: {ex.Message}";
+		}
+	}
+
+	void VolverAlMenu()
+	{
+		NavigationManager.NavigateTo("/Menu");
+	}
+
+
+}

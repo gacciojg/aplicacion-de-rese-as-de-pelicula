@@ -1,0 +1,56 @@
+﻿@page "/ListaUsuario"
+@using AplicacionPelicula.Modelos
+@inject UsuarioService UsuarioService
+@inject NavigationManager Navigation
+
+<h3>Lista de usuarios registrados</h3>
+
+@if(_usuarios == null)
+{
+	<p>cargando usuarios...</p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Usuarios</th>
+				<th>Rol</th>
+				<th>Fecha registro</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach(var usuario in _usuarios)
+			{
+				<tr>
+					<td>@usuario.Id</td>
+					<td>@usuario.Username</td>
+					<td>@usuario.Rol</td>
+					<td>@usuario.FechaRegistro.ToString("dd/MM/yyyy")</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+<button class="btn btn-secondary" @onclick="VolverAlMenu">volver al menu</button>
+
+@code {
+	private List<Usuario> _usuarios = new List<Usuario>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await CargarUsuarios();
+	}
+
+	private async Task CargarUsuarios()
+	{
+		_usuarios = await UsuarioService.ObtenerTodosUsuariosAsync();
+	}
+
+	private void VolverAlMenu()
+	{
+		Navigation.NavigateTo("/Menu");
+	}
+}

@@ -1,0 +1,49 @@
+﻿@page "/Weather"
+@inject PeliculaService PeliculaService
+
+<h1>Movimientos</h1>
+
+@if (Peliculas == null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titulo</th>
+                <th>Genero</th>
+                <th>Año</th>
+                <th>Descripcion</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pelicula in Peliculas)
+            {
+                <tr>
+                    <td>@pelicula.Titulo</td>
+                    <td>@pelicula.Genero</td>
+                    <td>@pelicula.Anio</td>
+                    <td>@pelicula.Descripcion</td>
+                    <td>@pelicula.Fecha.ToString("dd/MM/yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Pelicula> Peliculas = new List<Pelicula>();
+
+    private async Task CargarPeliculas()
+    {
+        Peliculas = await PeliculaService.GetPeliculasAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarPeliculas();
+    }
+}

@@ -1,0 +1,101 @@
+﻿@page "/counter"
+@inject PeliculaService PeliculaService
+
+<h1>Administrar Pelicula</h1>
+
+editar Pelicula
+<br />
+<label>Titulo</label>
+<input type="text" @bind=miPelicula.Titulo class="form-control" />
+
+<label>Genero</label>
+<select @bind=miPelicula.Genero class="form-select" aria-label="Default select example">
+    <option value="">Seleccione genero</option>
+    <option value="Accion">Accion</option>
+    <option value="Comedia">Comedia</option>
+    <option value="Drama">Drama</option>
+</select>
+
+<label>Año</label>
+<input type="number" @bind=miPelicula.Anio class="form-control" />
+
+<label>Descripcion</label>
+<input type="text" @bind=miPelicula.Descripcion class="form-control" />
+
+<br />
+<button class="btn btn-primary" @onclick="EditarPelicula">Guardar Cambios</button>
+<button class="btn btn-danger" @onclick="EliminarPelicula">Eliminar Pelicula</button>
+
+<!--tabla de peliculas-->
+@if (Peliculas == null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titulo</th>
+                <th>Genero</th>
+                <th>Año</th>
+                <th>Descripcion</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pelicula in Peliculas)
+            {
+                <tr>
+                    <td>@pelicula.Titulo</td>
+                    <td>@pelicula.Genero</td>
+                    <td>@pelicula.Anio</td>
+                    <td>@pelicula.Descripcion</td>
+                    <td>@pelicula.Fecha</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => Asignar(pelicula)">Editar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    //lista y modelos
+    public List<Pelicula> Peliculas = new List<Pelicula>();
+    Pelicula miPelicula = new Pelicula();
+
+    //cargar datos iniciales
+    public async Task EditarPelicula()
+    {
+        await PeliculaService.ActualizarPeliculaAsync(miPelicula);
+        Peliculas = await PeliculaService.GetPeliculasAsync(); //refrescar lista
+    }
+
+    public async Task EliminarPelicula()
+    {
+        await PeliculaService.BorrarPeliculaAsync(miPelicula.Id);
+        Peliculas = await PeliculaService.GetPeliculasAsync();
+        miPelicula = new Pelicula();//limpia formulario
+    }
+
+    //asignar pelicula al formulario
+    void Asignar(Pelicula pelicula)
+    {
+        miPelicula = new Pelicula
+        {
+            Id = pelicula.Id,
+            Titulo = pelicula.Titulo,
+            Genero = pelicula.Genero,
+            Anio = pelicula.Anio,
+            Descripcion = pelicula.Descripcion,
+            Fecha = pelicula.Fecha
+        };
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Peliculas = await PeliculaService.GetPeliculasAsync();
+    }
+}

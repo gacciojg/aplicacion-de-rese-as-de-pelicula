@@ -1,0 +1,45 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@using System.Net
+
+<div class="page">
+    @if (!EsPaginaSinSidebar)
+    {
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+    }
+
+    <main>
+        @if (!EsPaginaSinSidebar)
+        {
+            <div class="top-row px-4">
+                <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            </div>
+        }
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    bool EsPaginaSinSidebar
+    {
+        get
+        {
+            var relativePath = WebUtility.UrlDecode(//obtiene la ruta relativa y codifica caracfteres especiales como ñ
+                NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+            ).ToLowerInvariant();
+
+            Console.WriteLine($"DEBUG - Ruta actual: '{relativePath}'");//debug temporal para verificar la ruta real
+
+            return string.IsNullOrEmpty(relativePath) ||//pagina raiz
+                   relativePath == "menu" ||
+                   relativePath == "gestionreseñas" ||
+                   relativePath == "listausuario" ||
+                   relativePath.StartsWith("gestionreseñas/");
+        }
+    }
+}
