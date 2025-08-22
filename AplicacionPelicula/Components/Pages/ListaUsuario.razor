@@ -3,15 +3,90 @@
 @inject UsuarioService UsuarioService
 @inject NavigationManager Navigation
 
-<h3>Lista de usuarios registrados</h3>
+<style>
+    body, .page {
+        background: linear-gradient(135deg, #000 0%, #1a1a1a 100%) !important;
+        color: #fff;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
 
-@if(_usuarios == null)
+    .usuarios-container {
+        max-width: 720px;
+        margin: 32px auto;
+        padding: 16px;
+    }
+
+    /* --- TITULO --- */
+    .usuarios-title {
+        color: #f5c518;
+        font-size: 26px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #f5c518;
+        display: inline-block;
+    }
+
+    /* --- TABLA --- */
+    .usuarios-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #1e1e1e;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(0,0,0,.4);
+    }
+
+        .usuarios-table th {
+            background: #2a2a2a;
+            color: #f5c518;
+            text-align: left;
+            padding: 12px;
+            font-weight: 700;
+        }
+
+        .usuarios-table td {
+            padding: 12px;
+            border-bottom: 1px solid #333;
+        }
+
+        .usuarios-table tr:hover td {
+            background: #262626;
+        }
+
+    /* --- BOTON VOLVER --- */
+    .btn-volver {
+        margin-top: 18px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        border: 1px solid #f5c518;
+        background: transparent;
+        color: #f5c518;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .btn-volver:hover {
+            background: #f5c518;
+            color: #000;
+            transform: translateY(-1px);
+        }
+</style>
+
+<div class="usuarios-container">
+    <h3 class="usuarios-title">Lista de usuarios registrados</h3>
+
+    @if (_usuarios == null)
 {
-	<p>cargando usuarios...</p>
+        <p>Cargando usuarios...</p>
 }
 else
 {
-	<table class="table">
+        <table class="usuarios-table">
 		<thead>
 			<tr>
 				<th>ID</th>
@@ -21,7 +96,7 @@ else
 			</tr>
 		</thead>
 		<tbody>
-			@foreach(var usuario in _usuarios)
+                @foreach (var usuario in _usuarios)
 			{
 				<tr>
 					<td>@usuario.Id</td>
@@ -34,7 +109,8 @@ else
 	</table>
 }
 
-<button class="btn btn-secondary" @onclick="VolverAlMenu">volver al menu</button>
+    <button class="btn-volver" @onclick="VolverAlMenu">Volver al menú</button>
+</div>
 
 @code {
 	private List<Usuario> _usuarios = new List<Usuario>();

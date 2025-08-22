@@ -1,46 +1,178 @@
 ﻿@page "/counter"
 @inject PeliculaService PeliculaService
 
-<h1>Administrar Pelicula</h1>
+<style>
+    body, .page {
+        background-color: #121212 !important;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
 
-editar Pelicula
-<br />
+    .form-container {
+        background-color: #1c1c1c;
+        color: #fff;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+        max-width: 500px;
+        margin: 20px auto;
+    }
+
+    .form-title {
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+        color: #f1c40f;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        background-color: #333;
+        color: #fff;
+    }
+
+        .form-input:focus {
+            outline: none;
+            border: 2px solid #f1c40f;
+        }
+
+    .button-group {
+        display: flex;
+        flex-direction: column; /* para mobile: botones uno debajo del otro */
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-yellow {
+        background-color: #f1c40f;
+        border: none;
+        color: #000;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .btn-red {
+        background-color: #e74c3c;
+        border: none;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .btn-yellow:hover {
+        background-color: #d4ac0d;
+    }
+
+    .btn-red:hover {
+        background-color: #c0392b;
+    }
+
+    /* Tabla responsive */
+    .table-container {
+        overflow-x: auto;
+        margin-top: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #333;
+        color: #f1c40f;
+    }
+
+    tr:nth-child(even) {
+        background-color: #2c2c2c;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #1c1c1c;
+    }
+
+    .btn-edit {
+        background-color: #3498db;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 6px;
+        color: #fff;
+        font-size: 0.85rem;
+        cursor: pointer;
+    }
+
+        .btn-edit:hover {
+            background-color: #2980b9;
+        }
+</style>
+
+<div class="form-container">
+    <h3 class="form-title">Modo Edicion</h3>
+
+    <div class="form-group">
 <label>Titulo</label>
-<input type="text" @bind=miPelicula.Titulo class="form-control" />
+        <input type="text" @bind=miPelicula.Titulo class="form-input" />
+    </div>
 
+    <div class="form-group">
 <label>Genero</label>
-<select @bind=miPelicula.Genero class="form-select" aria-label="Default select example">
+        <select @bind=miPelicula.Genero class="form-input">
     <option value="">Seleccione genero</option>
     <option value="Accion">Accion</option>
     <option value="Comedia">Comedia</option>
     <option value="Drama">Drama</option>
 </select>
+    </div>
 
+    <div class="form-group">
 <label>Año</label>
-<input type="number" @bind=miPelicula.Anio class="form-control" />
+        <input type="number" @bind=miPelicula.Anio class="form-input" />
+    </div>
 
+    <div class="form-group">
 <label>Descripcion</label>
-<input type="text" @bind=miPelicula.Descripcion class="form-control" />
+        <input type="text" @bind=miPelicula.Descripcion class="form-input" />
+    </div>
 
-<br />
-<button class="btn btn-primary" @onclick="EditarPelicula">Guardar Cambios</button>
-<button class="btn btn-danger" @onclick="EliminarPelicula">Eliminar Pelicula</button>
+    <div class="button-group">
+        <button class="btn-yellow" @onclick="EditarPelicula">Guardar Cambios</button>
+        <button class="btn-red" @onclick="EliminarPelicula">Eliminar Pelicula</button>
+    </div>
 
-<!--tabla de peliculas-->
+    <div class="table-container">
 @if (Peliculas == null)
 {
     <p>Cargando...</p>
 }
 else
 {
-    <table class="table">
+            <table>
         <thead>
             <tr>
-                <th>Titulo</th>
-                <th>Genero</th>
+                        <th>Titulo</th>
+                        <th>Genero</th>
                 <th>Año</th>
-                <th>Descripcion</th>
+                        <th>Descripcion</th>
                 <th>Fecha</th>
+                        <th></th>
             </tr>
         </thead>
         <tbody>
@@ -53,13 +185,15 @@ else
                     <td>@pelicula.Descripcion</td>
                     <td>@pelicula.Fecha</td>
                     <td>
-                        <button class="btn btn-primary" @onclick="() => Asignar(pelicula)">Editar</button>
+                                <button class="btn-edit" @onclick="() => Asignar(pelicula)">Editar</button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 }
+    </div>
+</div>
 
 @code {
     //lista y modelos
@@ -80,8 +214,7 @@ else
         miPelicula = new Pelicula();//limpia formulario
     }
 
-    //asignar pelicula al formulario
-    void Asignar(Pelicula pelicula)
+    void Asignar(Pelicula pelicula)//asignar pelicula al formulario
     {
         miPelicula = new Pelicula
         {

@@ -1,12 +1,65 @@
 ﻿@page "/Weather"
 @inject PeliculaService PeliculaService
 
-<h1>Movimientos</h1>
+<style>
+    body, .page {
+        background-color: #121212 !important;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    .page-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 10px;
+    }
+
+    .page-title {
+        color: #f1c40f;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+    }
+
+    /*tarjetas*/
+    .card {
+        background-color: #1c1c1c;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+        .card h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #f1c40f;
+        }
+
+        .card p {
+            margin: 4px 0;
+            font-size: 0.95rem;
+            color: #ddd;
+        }
+
+        .card span {
+            font-weight: bold;
+            color: #fff;
+        }
+</style>
+
+<div class="page-container">
+    <h2 class="page-title">Listado de Peliculas</h2>
 
 @if (Peliculas == null)
 {
     <p>Cargando...</p>
 }
+    else if (!Peliculas.Any())
+    {
+        <p>No hay películas registradas.</p>
+    }
 else
 {
     <table class="table">
@@ -22,17 +75,19 @@ else
         <tbody>
             @foreach (var pelicula in Peliculas)
             {
-                <tr>
-                    <td>@pelicula.Titulo</td>
-                    <td>@pelicula.Genero</td>
-                    <td>@pelicula.Anio</td>
-                    <td>@pelicula.Descripcion</td>
-                    <td>@pelicula.Fecha.ToString("dd/MM/yyyy")</td>
-                </tr>
+            <div class="card">
+                <h4>@pelicula.Titulo</h4>
+                <p><span>Género:</span> @pelicula.Genero</p>
+                <p><span>Año:</span> @pelicula.Anio</p>
+                <p><span>Descripción:</span> @pelicula.Descripcion</p>
+                <p><span>Fecha:</span> @pelicula.Fecha.ToString("dd/MM/yyyy")</p>
+            </div>
             }
         </tbody>
     </table>
 }
+</div>
+
 
 @code {
     private List<Pelicula> Peliculas = new List<Pelicula>();
