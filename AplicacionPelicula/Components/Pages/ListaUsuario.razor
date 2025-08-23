@@ -18,7 +18,6 @@
         padding: 16px;
     }
 
-    /* --- TITULO --- */
     .usuarios-title {
         color: #f5c518;
         font-size: 26px;
@@ -30,7 +29,6 @@
         display: inline-block;
     }
 
-    /* --- TABLA --- */
     .usuarios-table {
         width: 100%;
         border-collapse: collapse;
@@ -57,7 +55,6 @@
             background: #262626;
         }
 
-    /* --- BOTON VOLVER --- */
     .btn-volver {
         margin-top: 18px;
         padding: 12px 20px;
@@ -81,35 +78,35 @@
     <h3 class="usuarios-title">Lista de usuarios registrados</h3>
 
     @if (_usuarios == null)
-{
+    {
         <p>Cargando usuarios...</p>
-}
-else
-{
+    }
+    else
+    {
         <table class="usuarios-table">
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Usuarios</th>
-				<th>Rol</th>
-				<th>Fecha registro</th>
-			</tr>
-		</thead>
-		<tbody>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuarios</th>
+                    <th>Rol</th>
+                    <th>Fecha registro</th>
+                </tr>
+            </thead>
+            <tbody>
                 @foreach (var usuario in _usuarios)
-			{
-				<tr>
-					<td>@usuario.Id</td>
-					<td>@usuario.Username</td>
-					<td>@usuario.Rol</td>
-					<td>@usuario.FechaRegistro.ToString("dd/MM/yyyy")</td>
-				</tr>
-			}
-		</tbody>
-	</table>
-}
+                {
+                    <tr>
+                        <td>@usuario.Id</td>
+                        <td>@usuario.Username</td>
+                        <td>@usuario.Rol</td>
+                        <td>@usuario.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 
-    <button class="btn-volver" @onclick="VolverAlMenu">Volver al menú</button>
+    <button class="btn-volver" @onclick="VolverAlMenu">Volver al menu</button>
 </div>
 
 @code {

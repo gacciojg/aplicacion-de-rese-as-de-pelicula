@@ -2,59 +2,46 @@
 @inject NavigationManager navigationManager
 
 <style>
+    /*Fondo y tipografia coherentes*/
+    body, .page {
+        background: linear-gradient(135deg, #000 0%, #1a1a1a 100%) !important;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
     .menu-container {
-        max-width: 400px;
-        margin: 50px auto;
-        padding: 20px;
+        max-width: 420px;
+        margin: 32px auto;
+        padding: 16px;
         text-align: center;
     }
 
-        /* --- ESTILO DEL TITULO --- */
-        .menu-container h3 {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 25px;
-            background: linear-gradient(90deg, #007bff, #00c6ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: relative;
-            display: inline-block;
-        }
-
-    .menu-container h3::after {
-         content: "";
-         display: block;
-         margin: 0 auto;
-         width: 60%;
-         height: 3px;
-         background: linear-gradient(90deg, #007bff, #00c6ff);
-         border-radius: 2px;
-         margin-top: 5px;
-         animation: expand 1s ease forwards;
+    /*Titulo*/
+    .menu-title {
+        color: #f5c518;
+        font-size: 28px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        margin: 0 0 18px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #f5c518;
+        display: inline-block;
     }
 
-    @@keyframes expand {
-        from {
-            width: 0;
-            opacity: 0;
-        }
-
-        to {
-            width: 60%;
-            opacity: 1;
-        }
-    }
-    /* --- LISTA DE OPCIONES --- */
+    /*Lista*/
     .menu-list {
         list-style: none;
         padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 12px;
     }
 
-        .menu-list li {
-            margin: 10px 0;
-        }
-
     .menu-link {
+        width: 100%;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -69,24 +56,24 @@
         transition: transform .15s ease, border-color .15s ease, background .15s ease;
     }
 
-        .menu-link:hover {
-       background: #262626;
-       border-color: #f5c518;
-       transform: translateY(-1px);
+    .menu-link:hover {
+        background: #262626;
+        border-color: #f5c518;
+        transform: translateY(-1px);
     }
 
     /*Estado activo del NavLink*/
     .menu-link.active {
-       border-color: #f5c518;
-       background: #242424;
-        }
+        border-color: #f5c518;
+        background: #242424;
+    }
 
-        .menu-link svg {
-            width: 20px;
-            height: 20px;
-       fill: #f5c518;
-       flex-shrink: 0;
-        }
+    .menu-link svg {
+        width: 20px;
+        height: 20px;
+        fill: #f5c518;
+        flex-shrink: 0;
+    }
 </style>
 
 
@@ -130,7 +117,6 @@
         </li>
     </ul>
 </div>
-
 
 
 @code {
