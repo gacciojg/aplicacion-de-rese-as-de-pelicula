@@ -46,7 +46,7 @@
 
     .button-group {
         display: flex;
-        flex-direction: column; 
+        flex-direction: column; /* para mobile: botones uno debajo del otro */
         gap: 10px;
         margin-top: 20px;
     }
@@ -80,7 +80,7 @@
         background-color: #c0392b;
     }
 
-  
+    /* Tabla responsive */
     .table-container {
         overflow-x: auto;
         margin-top: 20px;
@@ -128,34 +128,28 @@
     <h3 class="form-title">Modo Edicion</h3>
 
     <div class="form-group">
-        <label>Titulo</label>
+<label>Titulo</label>
         <input type="text" @bind=miPelicula.Titulo class="form-input" />
     </div>
 
     <div class="form-group">
-        <label>Genero</label>
+<label>Genero</label>
         <select @bind=miPelicula.Genero class="form-input">
-            <option value="">Seleccione genero</option>
-            <option value="Accion">Accion</option>
-            <option value="Comedia">Comedia</option>
-            <option value="Drama">Drama</option>
-        </select>
+    <option value="">Seleccione genero</option>
+    <option value="Accion">Accion</option>
+    <option value="Comedia">Comedia</option>
+    <option value="Drama">Drama</option>
+</select>
     </div>
 
     <div class="form-group">
-        <label>Año</label>
+<label>Año</label>
         <input type="number" @bind=miPelicula.Anio class="form-input" />
     </div>
 
     <div class="form-group">
-        <label>Descripcion</label>
+<label>Descripcion</label>
         <input type="text" @bind=miPelicula.Descripcion class="form-input" />
-    </div>
-
-    <div class="form-group">
-        <label>Imagen</label>
-        <input type="text" @bind=miPelicula.ImagenRuta class="form-input" readonly />
-        <button class="btn-yellow" @onclick="SeleccionarImagen">Cambiar Imagen</button>
     </div>
 
     <div class="button-group">
@@ -164,48 +158,50 @@
     </div>
 
     <div class="table-container">
-        @if (Peliculas == null)
-        {
-            <p>Cargando...</p>
-        }
-        else
-        {
+@if (Peliculas == null)
+{
+    <p>Cargando...</p>
+}
+else
+{
             <table>
-                <thead>
-                    <tr>
+        <thead>
+            <tr>
                         <th>Titulo</th>
                         <th>Genero</th>
-                        <th>Año</th>
+                <th>Año</th>
                         <th>Descripcion</th>
-                        <th>Fecha</th>
+                <th>Fecha</th>
                         <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var pelicula in Peliculas)
-                    {
-                        <tr>
-                            <td>@pelicula.Titulo</td>
-                            <td>@pelicula.Genero</td>
-                            <td>@pelicula.Anio</td>
-                            <td>@pelicula.Descripcion</td>
-                            <td>@pelicula.Fecha</td>
-                            <td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pelicula in Peliculas)
+            {
+                <tr>
+                    <td>@pelicula.Titulo</td>
+                    <td>@pelicula.Genero</td>
+                    <td>@pelicula.Anio</td>
+                    <td>@pelicula.Descripcion</td>
+                    <td>@pelicula.Fecha</td>
+                    <td>
                                 <button class="btn-edit" @onclick="() => Asignar(pelicula)">Editar</button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
     </div>
 </div>
 
 @code {
-    public List<Pelicula> Peliculas = new List<Pelicula>(); //lista y modelos
+    //lista y modelos
+    public List<Pelicula> Peliculas = new List<Pelicula>();
     Pelicula miPelicula = new Pelicula();
 
-    public async Task EditarPelicula()//cargar datos iniciales
+    //cargar datos iniciales
+    public async Task EditarPelicula()
     {
         await PeliculaService.ActualizarPeliculaAsync(miPelicula);
         Peliculas = await PeliculaService.GetPeliculasAsync(); //refrescar lista
@@ -227,29 +223,8 @@
             Genero = pelicula.Genero,
             Anio = pelicula.Anio,
             Descripcion = pelicula.Descripcion,
-            Fecha = pelicula.Fecha,
-            ImagenRuta = pelicula.ImagenRuta,
-            ImagenBytes = pelicula.ImagenBytes
+            Fecha = pelicula.Fecha
         };
-    }
-
-    async Task SeleccionarImagen()//seleccionar imagen
-    {
-        var fileResult = await FilePicker.Default.PickAsync(new PickOptions
-            {
-                PickerTitle = "Seleccione una imagen",
-                FileTypes = FilePickerFileType.Images
-            });
-        if(fileResult != null)
-        {
-            using var stream = await fileResult.OpenReadAsync();
-            using var ms = new MemoryStream();
-            await stream.CopyToAsync(ms);
-
-            miPelicula.ImagenBytes = ms.ToArray();//guardo los bytes
-            miPelicula.ImagenRuta = fileResult.FullPath;
-        }
-
     }
 
     protected override async Task OnInitializedAsync()

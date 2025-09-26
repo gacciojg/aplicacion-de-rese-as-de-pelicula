@@ -15,9 +15,6 @@ namespace AplicacionPelicula
 
         public double? Anio { get; set; }
         public DateTime Fecha { get; set; } = DateTime.Now; //fecha, hora actual
-        public string? ImagenRuta { get; set; }
-   
-        public byte[]? ImagenBytes { get; set; }//bytes de la imagen para mostrarla como Base64
 
         public List<Resenia> Resenias { get; set; } = new List<Resenia>();
     }

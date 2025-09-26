@@ -1,4 +1,4 @@
-﻿ using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +19,8 @@ namespace AplicacionPelicula
             _context.Database.EnsureCreated(); //crea la base de datos y tablas si no existen
         }
 
-        public async Task AgregarPeliculaAsync(Pelicula pelicula)//inserta un nuevo registro en la tabla peliculas
+        //inserta un nuevo registro en la tabla peliculas
+        public async Task AgregarPeliculaAsync(Pelicula pelicula)
         {
             try
             {
@@ -38,34 +39,15 @@ namespace AplicacionPelicula
             }
         }
 
-        public async Task AgregarPeliculaDesdeArchivoAsync(string rutaArchivo, string titulo, string genero, string descripcion, double anio)//crea y agrega pelicula desde una ruta de archivo
-        {
-            if (!File.Exists(rutaArchivo))
-                throw new FileNotFoundException("No se encontró la imagen.", rutaArchivo);
-
-            var bytesImagen = File.ReadAllBytes(rutaArchivo);
-
-            var pelicula = new Pelicula
-            {
-                Titulo = titulo,
-                Genero = genero,
-                Descripcion = descripcion,
-                Anio = anio,
-                Fecha = DateTime.Now,
-                ImagenBytes = bytesImagen,
-                ImagenRuta = rutaArchivo 
-            };
-
-            await AgregarPeliculaAsync(pelicula);
-        }
-
-        public async Task<List<Pelicula>> GetPeliculasAsync()//retornta una lista completa de peliculas
+        //retornta una lista completa de peliculas
+        public async Task<List<Pelicula>> GetPeliculasAsync()
         {
             using var context = new AppDbContext();
             return await context.Peliculas.ToListAsync();
         }
 
-        public async Task<Pelicula> GetPeliculaByIdAsync(int id)//obtener un solo movimiento por el id
+        //obtener un solo movimiento por el id
+        public async Task<Pelicula> GetPeliculaByIdAsync(int id)
         {
             using var context = new AppDbContext();
             return await context.Peliculas
@@ -73,7 +55,8 @@ namespace AplicacionPelicula
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task ActualizarPeliculaAsync(Pelicula pelicula)//marca el objeto como modificado y guarda los cambios
+        //marca el objeto como modificado y guarda los cambios
+        public async Task ActualizarPeliculaAsync(Pelicula pelicula)
         {
             using var context = new AppDbContext();
             context.Peliculas.Update(pelicula);
@@ -92,3 +75,11 @@ namespace AplicacionPelicula
         }
     }
 }
+//si quiero realizar los ejercicios que me faltan deberia empezar por crear otra base de datos aparte para el usuario
+//asi cuando cree el login, se registrara en una lista aparte el usuario que se logueo, entonces, para completar
+//el tema maestro-detalle, debo crear un servicio nuevo, en este caso, el usuario, una lista aparte y una base de datos aparte, cuando diseñe el login
+//se hara mas evidente esto, pudiendo acceder a una lista aparte donde estaran los usuarios registrados
+//y a su vez, podre continuar con la pagina principal de peliculas. nota mental
+//crea el menu primero antes de empezar con el usuario, login, etc.
+//los iconos son solo iconos que resaltan la utilidad de ciertos botones, y podes agrgar la imagen que quieras
+//menu -> basededatos -> servicioUsuario -> login 

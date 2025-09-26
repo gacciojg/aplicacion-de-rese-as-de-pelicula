@@ -10,80 +10,81 @@
         padding: 0;
     }
 
-    .form-container {
-        background-color: #1c1c1c;
-        color: #fff;
-        padding: 20px;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-        max-width: 400px;
-        margin: 20px auto;
-    }
+.form-container {
+    background-color: #1c1c1c;
+    color: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    max-width: 400px;
+    margin: 20px auto;
+}
 
-    .form-title {
-        margin-bottom: 15px;
-        font-size: 1.5rem;
-        color: #f1c40f;
-        text-align: center;
-    }
+.form-title {
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    color: #f1c40f;
+    text-align: center;
+}
 
-    .form-group {
-        margin-bottom: 15px;
-    }
+.form-group {
+    margin-bottom: 15px;
+}
 
-    .form-input {
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        border: none;
-        background-color: #333;
-        color: #fff;
-    }
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+}
 
-        .form-input:focus {
-            outline: none;
-            border: 2px solid #f1c40f;
-        }
+.form-input:focus {
+    outline: none;
+    border: 2px solid #f1c40f;
+}
 
-    .button-group {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-    }
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
 
-    .btn-yellow {
-        background-color: #f1c40f;
-        border: none;
-        color: #000;
-        padding: 10px 15px;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-    }
+.btn-yellow {
+    background-color: #f1c40f;
+    border: none;
+    color: #000;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-    .btn-gray {
-        background-color: #555;
-        border: none;
-        color: #fff;
-        padding: 10px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-    }
+.btn-gray {
+    background-color: #555;
+    border: none;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
 
-    .btn-yellow:hover {
-        background-color: #d4ac0d;
-    }
+.btn-yellow:hover {
+    background-color: #d4ac0d;
+}
 
-    .btn-gray:hover {
-        background-color: #444;
-    }
+.btn-gray:hover {
+    background-color: #444;
+}
 
-    .mensaje {
-        margin-top: 10px;
-        text-align: center;
-        font-size: 0.9rem;
-    }
+.mensaje {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 0.9rem;
+}
 </style>
+
 
 <div class="form-container">
     <h3 class="form-title">Nueva Película</h3>
@@ -98,27 +99,17 @@
         <select @bind=miPelicula.Genero class="form-input">
             <option value="">Seleccione un género</option>
             <option value="Accion">Acción</option>
-            <option value="Comedia">Comedia</option>
-            <option value="Drama">Drama</option>
-        </select>
-    </div>
+	<option value="Comedia">Comedia</option>
+	<option value="Drama">Drama</option>
+</select>
 
-    <div class="form-group">
-        <label>Año</label>
+<label>Año</label>
         <input type="number" @bind=miPelicula.Anio class="form-input" />
     </div>
 
     <div class="form-group">
         <label>Descripción</label>
         <textarea @bind=miPelicula.Descripcion class="form-input"></textarea>
-    </div>
-
-    <div class="form-group">
-        <label>Imagen</label>
-        <div style="display:flex; gap:10px; align-items:center;">
-            <input type="text" @bind=miPelicula.ImagenRuta class="form-input" placeholder="Ruta de la imagen..." />
-            <button type="button" class="btn-yellow" @onclick="AbrirSelectorImagen">Agregar Imagen</button>
-        </div>
     </div>
 
     <div class="button-group">
@@ -130,27 +121,27 @@
 </div>
 
 @code {
-    Pelicula miPelicula = new Pelicula();
-    string mensaje;
+	Pelicula miPelicula = new Pelicula();
+	string mensaje;
 
-    public async Task CrearPelicula()
-    {
-        try
-        {
-            await PeliculaService.AgregarPeliculaAsync(miPelicula);
-            mensaje = "pelicula guardada";
-            miPelicula = new Pelicula();
-        }
-        catch(Exception ex)
-        {
-            mensaje = $"error: {ex.Message}";
-        }
-    }
+	public async Task CrearPelicula()
+	{
+		try
+		{
+			await PeliculaService.AgregarPeliculaAsync(miPelicula);
+			mensaje = "pelicula guardada";
+			miPelicula = new Pelicula();
+		}
+		catch(Exception ex)
+		{
+			mensaje = $"error: {ex.Message}";
+		}
+	}
 
-    void VolverAlMenu()
-    {
-        NavigationManager.NavigateTo("/Menu");
-    }
+	void VolverAlMenu()
+	{
+		NavigationManager.NavigateTo("/Menu");
+	}
 
     private async Task AbrirSelectorImagen()
     {
@@ -164,18 +155,26 @@
 
             var result = await FilePicker.PickAsync(pickOptions);
 
-            if (result == null) return;
+            if (result == null)
+            {
+                return;
+            }
 
             using var stream = await result.OpenReadAsync();//abro el stream de la imagen seleccionada
 
-            using var ms = new MemoryStream();
-            await stream.CopyToAsync(ms);
+            var imagesDir = Path.Combine(FileSystem.AppDataDirectory, "images");//carpeta donde guardo copias dentro de la app
+            Directory.CreateDirectory(imagesDir);
 
-            miPelicula.ImagenBytes = ms.ToArray();//guardo los bytes
-            miPelicula.ImagenRuta = result.FullPath; 
+            var destFileName = $"{Guid.NewGuid()}{Path.GetExtension(result.FileName)}";//nombre unico para evitar colisiones
+            var destPath = Path.Combine(imagesDir, destFileName);
 
+            using (var dest = File.OpenWrite(destPath))//copio el archivo
+            {
+                await stream.CopyToAsync(dest);
+            }
+
+            miPelicula.ImagenRuta = destPath;//guardo la ruta en el modelo
             mensaje = $"Imagen seleccionada: {result.FileName}";
-
         }
         catch (Exception ex)
         {

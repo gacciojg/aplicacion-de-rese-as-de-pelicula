@@ -35,13 +35,16 @@ namespace AplicacionPelicula
 
             var app = builder.Build();
 
+            // Inicialización INFALIBLE de la base de datos
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
+                // Borra y recrea la DB (solo en desarrollo)
                 db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
 
+                // Verificación de tablas (debug)
                 var tables = db.Database.SqlQueryRaw<string>(
                     "SELECT name FROM sqlite_master WHERE type='table';").ToList();
                 System.Diagnostics.Debug.WriteLine($"Tablas creadas: {string.Join(", ", tables)}");
