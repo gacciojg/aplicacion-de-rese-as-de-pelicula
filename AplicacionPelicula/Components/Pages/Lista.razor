@@ -29,16 +29,7 @@
         padding: 15px;
         margin-bottom: 15px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
     }
-
-        .card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
 
         .card h4 {
             margin: 0;
@@ -61,34 +52,43 @@
 <div class="page-container">
     <h2 class="page-title">Listado de Peliculas</h2>
 
-    @if (Peliculas == null)
-    {
-        <p>Cargando...</p>
-    }
+@if (Peliculas == null)
+{
+    <p>Cargando...</p>
+}
     else if (!Peliculas.Any())
     {
-        <p>No hay peliculas registradas.</p>
+        <p>No hay películas registradas.</p>
     }
-    else
-    {
-        @foreach (var pelicula in Peliculas)
-        {
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titulo</th>
+                <th>Genero</th>
+                <th>Año</th>
+                <th>Descripcion</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pelicula in Peliculas)
+            {
             <div class="card">
-                @if (pelicula.ImagenBytes != null && pelicula.ImagenBytes.Length > 0)
-                {
-                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(pelicula.ImagenBytes)"
-                         alt="Imagen de @pelicula.Titulo" />
-                }
                 <h4>@pelicula.Titulo</h4>
-                <p><span>Genero:</span> @pelicula.Genero</p>
+                <p><span>Género:</span> @pelicula.Genero</p>
                 <p><span>Año:</span> @pelicula.Anio</p>
-                <p><span>Descripcion:</span> @pelicula.Descripcion</p>
+                <p><span>Descripción:</span> @pelicula.Descripcion</p>
                 <p><span>Fecha:</span> @pelicula.Fecha.ToString("dd/MM/yyyy")</p>
             </div>
-        }
-    }
-
+            }
+        </tbody>
+    </table>
+}
 </div>
+
+
 @code {
     private List<Pelicula> Peliculas = new List<Pelicula>();
 

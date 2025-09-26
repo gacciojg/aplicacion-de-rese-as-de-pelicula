@@ -15,18 +15,14 @@ dos caminos: dependiendo de cual cuenta escoga, será el sitio donde terminara u
 Menu => si ingreso como administrador ira directo al menú donde tendrá 4 opciones, 
         "gestión de peliculas", "catalogo de peliculas", "login" y "lista de                 usuarios"   
   
-        gestión de peliculas: es la parte donde podrá agregar la pelicula al catalogo, podrá ser capaz de agregar una imagen local 
-                              desde alguna carpeta que tenga   almacenadas las imagenes, editarlo, eliminarlo y visualizar la lista 
-                              de peliculas agregadas
+        gestión de peliculas: es la parte donde podrá agregar la pelicula al catalogo, editarlo, eliminarlo y visualizar la lista de peliculas agregadas
 
-        catalogo de reseñas: es la sección de reseñas donde visualizara las peliculas cargadas en gestión de peliculas
+        catalogo de peliculas: es la sección de reseñas donde visualizara las peliculas cargadas en gestión de peliculas
 
         login: podrá volver al login
          
-        lista de usuarios: (Actualizacion) ahora usted podría visualizar a los usuarios 
-                           (en este caso pueden ser usuario o administrador de momento)
+        lista de usuarios: "podra" ver los usuarios ingresados recientemente, ósea la cuenta del administrador o el del usuario (el podrá tiene comillas porque a la fecha en el que estoy escribiendo esto estoy lidiando con ese tema ya que al no tener una base de datos estándar los datos de memoria del login se me borran, espero poder resolverlo para el momento en el que lo entregue)
 
-catalgo de reseñas (como user) => si ingresa como user va directamente al catalogo, en el que podrá ver, calificar y reseñas la pelicula que 
-                                  haya cargado el administrador
+catalgo de peliculas (como user) => si ingresa como user va directamente al catalogo
 
         

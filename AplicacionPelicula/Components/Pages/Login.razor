@@ -12,6 +12,7 @@
         font-family: Arial, sans-serif;
     }
 
+<style>
     .login-container {
         max-width: 380px;
         margin: 0 auto;
@@ -32,15 +33,15 @@
     .form-control {
         width: 100%;
         padding: 12px;
-        margin-bottom: 15px;
+            margin-bottom: 15px;
         border-radius: 8px;
         border: none;
         outline: none;
         font-size: 16px;
-    }
+        }
 
     .btn {
-        width: 100%;
+            width: 100%;
         padding: 12px;
         border-radius: 8px;
         font-size: 16px;
@@ -66,10 +67,10 @@
         }
 
     .text-danger {
-        margin-top: 10px;
-        font-weight: bold;
+            margin-top: 10px;
+            font-weight: bold;
         color: #e74c3c;
-    }
+        }
 </style>
 
 <div class="login-container">
@@ -96,6 +97,7 @@
 
     <p class="text-danger">@mensajeError</p>
 </div>
+
 @code {
 	private string username = string.Empty;
 	private string password = string.Empty;

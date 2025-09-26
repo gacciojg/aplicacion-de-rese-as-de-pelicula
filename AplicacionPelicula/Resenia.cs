@@ -11,7 +11,7 @@ namespace AplicacionPelicula
         public int Id { get; set; }
         public int PeliculaId { get; set; }
         public string? Comentario { get; set; }
-        public int Estrellas { get; set; }
+        public bool MeGusta { get; set; }
         public DateTime Fecha { get; set; } = DateTime.Now; 
         public Pelicula? Pelicula { get; set; }
     }
