@@ -1,4 +1,5 @@
 ﻿@page "/GestionReseñas"
+@using AplicacionPelicula.Servicios
 @inject PeliculaService PeliculaService
 @inject ReseniaService ReseniaService
 
@@ -190,7 +191,7 @@
                 <input type="text" @bind="nuevoComentario" placeholder="Escribe un comentario" class="comment-input" />
 
                 <div class="stars">
-                    @for (int i = 1; i <= 5; i++)
+                    @for (int i = 1; i <= 5; i++)//muestra reseñas con estrellas
                     {
                         var idx = i; //copia por iteracion
                         <span class="star @(idx <= estrellasSeleccionadas ? "filled" : "")"@onclick="() => ToggleEstrellas(idx)">★</span>
@@ -203,11 +204,11 @@
 </div>
 
 @code {
-    private List<Pelicula>? peliculas;
+    private List<Modelos.Pelicula>? peliculas;
     private string nuevoComentario = "";
     private int estrellasSeleccionadas = 0;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()//asegura que cuando la pagina abre, todo ya este disponible
     {
         peliculas = await PeliculaService.GetPeliculasAsync();
 
@@ -222,11 +223,11 @@
         estrellasSeleccionadas = cantidad;
     }
 
-    private async Task AgregarReseña(int peliculaId)
+    private async Task AgregarReseña(int peliculaId)//valida que el comentario no este vacio y que al menos haya 1 estrella
     {
         if (string.IsNullOrWhiteSpace(nuevoComentario) || estrellasSeleccionadas == 0) return;//valida que el comentario no este vacio
 
-        var nuevaReseña = new Resenia
+        var nuevaReseña = new Modelos.Resenia
 			{
 				PeliculaId = peliculaId,
 				Comentario = nuevoComentario,

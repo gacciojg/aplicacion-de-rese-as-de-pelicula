@@ -1,4 +1,5 @@
 ﻿@page "/counter"
+@using AplicacionPelicula.Servicios
 @inject PeliculaService PeliculaService
 
 <style>
@@ -26,8 +27,14 @@
         text-align: center;
     }
 
-    .form-group {
-        margin-bottom: 15px;
+    .form-group {/*permite los botones al lado de inputs*/
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+    }
+
+    .form-group label{
+        grid-column: 1 / -1;
     }
 
     .form-input {
@@ -39,10 +46,10 @@
         color: #fff;
     }
 
-        .form-input:focus {
-            outline: none;
-            border: 2px solid #f1c40f;
-        }
+    .form-input:focus {
+        outline: none;
+        border: 2px solid #f1c40f;
+    }
 
     .button-group {
         display: flex;
@@ -160,7 +167,11 @@
 
     <div class="button-group">
         <button class="btn-yellow" @onclick="EditarPelicula">Guardar Cambios</button>
-        <button class="btn-red" @onclick="EliminarPelicula">Eliminar Pelicula</button>
+
+        <button class="btn-red" @onclick="EliminarPelicula">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" /> <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" /> </svg>
+            Eliminar Pelicula
+            </button>
     </div>
 
     <div class="table-container">
@@ -202,25 +213,25 @@
 </div>
 
 @code {
-    public List<Pelicula> Peliculas = new List<Pelicula>(); //lista y modelos
-    Pelicula miPelicula = new Pelicula();
+    public List<Modelos.Pelicula> Peliculas = new List<Modelos.Pelicula>(); //lista y modelos
+    Modelos.Pelicula miPelicula = new Modelos.Pelicula();
 
     public async Task EditarPelicula()//cargar datos iniciales
     {
-        await PeliculaService.ActualizarPeliculaAsync(miPelicula);
+        await PeliculaService.ActualizarPeliculaAsync(miPelicula);//guarda cambios
         Peliculas = await PeliculaService.GetPeliculasAsync(); //refrescar lista
     }
 
     public async Task EliminarPelicula()
     {
-        await PeliculaService.BorrarPeliculaAsync(miPelicula.Id);
-        Peliculas = await PeliculaService.GetPeliculasAsync();
-        miPelicula = new Pelicula();//limpia formulario
+        await PeliculaService.BorrarPeliculaAsync(miPelicula.Id);//elimina de la db
+        Peliculas = await PeliculaService.GetPeliculasAsync();//refresca
+        miPelicula = new Modelos.Pelicula();//limpia formulario
     }
 
-    void Asignar(Pelicula pelicula)//asignar pelicula al formulario
+    void Asignar(Modelos.Pelicula pelicula)//asignar pelicula al formulario
     {
-        miPelicula = new Pelicula
+        miPelicula = new Modelos.Pelicula
         {
             Id = pelicula.Id,
             Titulo = pelicula.Titulo,
@@ -247,13 +258,13 @@
             await stream.CopyToAsync(ms);
 
             miPelicula.ImagenBytes = ms.ToArray();//guardo los bytes
-            miPelicula.ImagenRuta = fileResult.FullPath;
+            miPelicula.ImagenRuta = fileResult.FullPath;//guarda la ruta real
         }
 
     }
 
     protected override async Task OnInitializedAsync()
     {
-        Peliculas = await PeliculaService.GetPeliculasAsync();
+        Peliculas = await PeliculaService.GetPeliculasAsync();//carga inicial de la tabla
     }
 }

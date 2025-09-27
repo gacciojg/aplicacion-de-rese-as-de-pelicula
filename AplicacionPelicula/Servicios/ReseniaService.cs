@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AplicacionPelicula.BaseDatos;
+using AplicacionPelicula.Modelos;
 using Microsoft.EntityFrameworkCore;
 
-namespace AplicacionPelicula
+namespace AplicacionPelicula.Servicios
 {
     public class ReseniaService
     {
@@ -18,15 +20,15 @@ namespace AplicacionPelicula
         public async Task<List<Resenia>> GetReseñaByPeliculaIdsAsync(int peliculaId)
         {
             return await _context.Resenias
-                .Where(r => r.PeliculaId == peliculaId)
-                .OrderByDescending(r => r.Fecha)
+                .Where(r => r.PeliculaId == peliculaId)//filtrado de reseñas y trae solo las que pertenecen a la pelicula indicada
+                .OrderByDescending(r => r.Fecha)//aparece la reseña mas nueva
                 .ToListAsync();
         }
 
         public async Task AgregarReseñasAsync(Resenia reseña)
         {
             _context.Resenias.Add(reseña);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();//"escribe"en la base de datos
         }
     }
 }

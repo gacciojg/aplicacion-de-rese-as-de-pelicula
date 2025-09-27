@@ -1,21 +1,23 @@
-﻿ using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AplicacionPelicula.BaseDatos;
+using AplicacionPelicula.Modelos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Media;
 
-namespace AplicacionPelicula
+namespace AplicacionPelicula.Servicios
 {
     public class PeliculaService
     {
         private readonly AppDbContext _context; //instancia del contexto que maneja la db
 
-        public PeliculaService()
+        public PeliculaService(AppDbContext context)
         {
-            _context = new AppDbContext();
+            _context = context;
             _context.Database.EnsureCreated(); //crea la base de datos y tablas si no existen
         }
 
@@ -23,9 +25,8 @@ namespace AplicacionPelicula
         {
             try
             {
-                using var context = new AppDbContext();
-                context.Peliculas.Add(pelicula);
-                await context.SaveChangesAsync();//guarda cambios
+                _context.Peliculas.Add(pelicula);
+                await _context.SaveChangesAsync();//guarda cambios
             }
             catch (DbUpdateException dbEx)
             {
@@ -52,7 +53,7 @@ namespace AplicacionPelicula
                 Descripcion = descripcion,
                 Anio = anio,
                 Fecha = DateTime.Now,
-                ImagenBytes = bytesImagen,
+                ImagenBytes = bytesImagen,//guarda la imagen en binario
                 ImagenRuta = rutaArchivo 
             };
 
@@ -61,33 +62,33 @@ namespace AplicacionPelicula
 
         public async Task<List<Pelicula>> GetPeliculasAsync()//retornta una lista completa de peliculas
         {
-            using var context = new AppDbContext();
-            return await context.Peliculas.ToListAsync();
+            return await _context.Peliculas.ToListAsync();
         }
 
         public async Task<Pelicula> GetPeliculaByIdAsync(int id)//obtener un solo movimiento por el id
         {
-            using var context = new AppDbContext();
-            return await context.Peliculas
+            return await _context.Peliculas
                 .AsNoTracking()//evita que no guarde en su lista de entidades rastreadas
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task ActualizarPeliculaAsync(Pelicula pelicula)//marca el objeto como modificado y guarda los cambios
         {
-            using var context = new AppDbContext();
-            context.Peliculas.Update(pelicula);
-            await context.SaveChangesAsync();
+            var entity = await _context.Peliculas.FindAsync(pelicula.Id);
+            if(entity != null)
+            {
+                _context.Entry(entity).CurrentValues.SetValues(pelicula);//busca la entidad original en la bd y aplica los cambios del clon, evitando conflictos con tracking
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task BorrarPeliculaAsync(int id)
         {
-            using var context = new AppDbContext();
-            var Pelicula = await context.Peliculas.FindAsync(id);//busca el registro
+            var Pelicula = await _context.Peliculas.FindAsync(id);//busca el registro
             if (Pelicula != null)
             {
-                context.Peliculas.Remove(Pelicula);//elimina
-                await context.SaveChangesAsync();//guarda cambios
+                _context.Peliculas.Remove(Pelicula);//elimina
+                await _context.SaveChangesAsync();//guarda cambios
             }
         }
     }

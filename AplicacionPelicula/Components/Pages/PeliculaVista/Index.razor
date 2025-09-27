@@ -1,4 +1,5 @@
 ﻿@page "/Index"
+@using AplicacionPelicula.Servicios
 @inject PeliculaService PeliculaService
 @inject NavigationManager NavigationManager
 
@@ -10,7 +11,7 @@
         padding: 0;
     }
 
-    .form-container {
+    .form-container {/*formulario*/
         background-color: #1c1c1c;
         color: #fff;
         padding: 20px;
@@ -130,16 +131,16 @@
 </div>
 
 @code {
-    Pelicula miPelicula = new Pelicula();
+    Modelos.Pelicula miPelicula = new Modelos.Pelicula();
     string mensaje;
 
     public async Task CrearPelicula()
     {
         try
         {
-            await PeliculaService.AgregarPeliculaAsync(miPelicula);
+            await PeliculaService.AgregarPeliculaAsync(miPelicula);//guarda la peliucla en la db
             mensaje = "pelicula guardada";
-            miPelicula = new Pelicula();
+            miPelicula = new Modelos.Pelicula();//resete el form
         }
         catch(Exception ex)
         {
@@ -171,8 +172,8 @@
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms);
 
-            miPelicula.ImagenBytes = ms.ToArray();//guardo los bytes
-            miPelicula.ImagenRuta = result.FullPath; 
+            miPelicula.ImagenBytes = ms.ToArray();//guardo los bytes para mostrar en base 64
+            miPelicula.ImagenRuta = result.FullPath;//almacena la ruta
 
             mensaje = $"Imagen seleccionada: {result.FileName}";
 

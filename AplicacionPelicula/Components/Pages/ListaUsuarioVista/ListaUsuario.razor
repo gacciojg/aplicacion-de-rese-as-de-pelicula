@@ -1,5 +1,6 @@
 ﻿@page "/ListaUsuario"
 @using AplicacionPelicula.Modelos
+@using AplicacionPelicula.Servicios
 @inject UsuarioService UsuarioService
 @inject NavigationManager Navigation
 
@@ -77,7 +78,7 @@
 <div class="usuarios-container">
     <h3 class="usuarios-title">Lista de usuarios registrados</h3>
 
-    @if (_usuarios == null)
+    @if (_usuarios == null)//muestra mensaje
     {
         <p>Cargando usuarios...</p>
     }
@@ -93,7 +94,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var usuario in _usuarios)
+                @foreach (var usuario in _usuarios)//renderiza dinamicamente cada usuario en la tabla
                 {
                     <tr>
                         <td>@usuario.Id</td>
@@ -112,18 +113,18 @@
 @code {
 	private List<Usuario> _usuarios = new List<Usuario>();
 
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnInitializedAsync()//ciclo de vida que carga los usuarios cuando inicializa la pag
 	{
 		await CargarUsuarios();
 	}
 
 	private async Task CargarUsuarios()
 	{
-		_usuarios = await UsuarioService.ObtenerTodosUsuariosAsync();
+		_usuarios = await UsuarioService.ObtenerTodosUsuariosAsync();//llama al servicio para obtener lista de usuarios desde la db
 	}
 
 	private void VolverAlMenu()
 	{
-		Navigation.NavigateTo("/Menu");
+		Navigation.NavigateTo("/Menu");//regresa
 	}
 }

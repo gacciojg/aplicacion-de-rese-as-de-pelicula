@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using AplicacionPelicula.Modelos
+@using AplicacionPelicula.Servicios
 @inject LoginService LoginService
 @inject NavigationManager Navigation
 
@@ -47,16 +48,16 @@
         margin-top: 10px;
     }
 
-    .btn-primary {
+    .btn-primary {/*Ingresar*/
         background-color: #3498db;
         border: none;
     }
 
-        .btn-primary:hover {
-            background-color: #2980b9;
-        }
+    .btn-primary:hover {
+        background-color: #2980b9;
+    }
 
-    .btn-secondary {
+    .btn-secondary {/*registrarse*/
         background-color: #2ecc71;
         border: none;
     }
@@ -70,6 +71,20 @@
         font-weight: bold;
         color: #e74c3c;
     }
+
+    .input-group-text{
+        display: flex;
+        align-items: center; /*centro el icono verticalmente*/
+        justify-content: center;
+        background-color: #2c2c2c;
+        border: none;
+        border-radius: 10px 0 0 8px;
+        color: #f1c40f;
+        padding: 16px;
+        height: 100%;/*esto me asegura que iguale la altura del input*/
+    }
+
+    
 </style>
 
 <div class="login-container">
@@ -81,14 +96,30 @@
         Iniciar Sesion
     </h3>
 
-    <div class="mb-3">
+    <div class="mb-3"><!--campo usuario-->
         <label>Usuario:</label>
-        <input type="text" @bind="username" class="form-control" />
+        <div class="input-group">
+            <span class="input-group-text">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-envelope" viewBox="0 0 16 16">
+                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
+                </svg>
+            </span>
+            <input type="text" @bind="username" class="form-control" placeholder="Ingrese su usuario" />
+        </div>
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3"><!--campo contraseña-->
         <label>Contraseña:</label>
-        <input type="password" @bind="password" class="form-control" />
+        <div class="input-group">
+            <span class="input-group-text" >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag-plus" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5" />
+                    <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
+                </svg>
+            </span>
+            <input type="password" @bind="password" class="form-control" placeholder="Ingrese su Contraseña" />
+        </div>
     </div>
 
     <button class="btn btn-primary" @onclick="LoginUsuario">Ingresar</button>
@@ -105,14 +136,14 @@
 	{
 		mensajeError = string.Empty;//limpia mensajes anteriores 
 
-		var usuario = await LoginService.validarUsuario(username, password);
+		var (exito, mensaje, usuario) = await LoginService.validarUsuario(username, password);//es el punto de conexion entre la ui y la autenticacion
 
-		if (usuario != null)
+		if (exito && usuario != null)
 		{
-			if(usuario.Username == "admin")
+			if(usuario.Rol == "Administrador")
 			{
 				Navigation.NavigateTo("/menu");//si esta bien, se reedirige al menu
-			} else if(usuario.Username == "user")
+			} else if(usuario.Rol == "Usuario")
 			{
 				Navigation.NavigateTo("/gestionReseñas");
 			}

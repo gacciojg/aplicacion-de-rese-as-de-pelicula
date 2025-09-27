@@ -12,7 +12,7 @@ namespace AplicacionPelicula.Modelos
         public string Username { get; set; }
         public string Password { get; set; }
         public string Rol {  get; set; }
-        public string ImagenRuta { get; set; }
+        public string ImagenRuta { get; set; }//ruta donde se guarda la imagen
         public DateTime FechaRegistro { get; set; } = DateTime.Now;
     }
 }

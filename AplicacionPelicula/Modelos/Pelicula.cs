@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AplicacionPelicula
+namespace AplicacionPelicula.Modelos
 {
     public class Pelicula
     {
@@ -19,6 +19,6 @@ namespace AplicacionPelicula
    
         public byte[]? ImagenBytes { get; set; }//bytes de la imagen para mostrarla como Base64
 
-        public List<Resenia> Resenias { get; set; } = new List<Resenia>();
+        public List<Resenia> Resenias { get; set; } = new List<Resenia>();//relacion uno a muchos
     }
 }

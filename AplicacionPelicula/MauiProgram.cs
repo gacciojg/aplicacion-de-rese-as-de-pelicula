@@ -3,10 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Data.Common;
 using Microsoft.Maui.Storage;
-using AplicacionPelicula.Modelos;
+using AplicacionPelicula.Servicios;
+using AplicacionPelicula.BaseDatos;
 
 namespace AplicacionPelicula
-{
+{ 
     public static class MauiProgram
     {
         public static MauiApp CreateMauiApp()
@@ -26,27 +27,20 @@ namespace AplicacionPelicula
             builder.Logging.AddDebug();
 #endif
 
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseInMemoryDatabase("AppDb");
+            });//appdbcontext registrado usando una base de datos en memoria
+
+            builder.Services.AddScoped(sp => new HttpClient());//registo httpclient
+
             //registrar servicios
             builder.Services.AddDbContext<AppDbContext>();
             builder.Services.AddScoped<PeliculaService>();
             builder.Services.AddScoped<ReseniaService>();
             builder.Services.AddScoped<UsuarioService>();
             builder.Services.AddScoped<LoginService>();
-
-            var app = builder.Build();
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-                db.Database.EnsureDeleted();
-                db.Database.EnsureCreated();
-
-                var tables = db.Database.SqlQueryRaw<string>(
-                    "SELECT name FROM sqlite_master WHERE type='table';").ToList();
-                System.Diagnostics.Debug.WriteLine($"Tablas creadas: {string.Join(", ", tables)}");
-            }
-            return app;
+            return builder.Build();
         }
     }
 }
