@@ -32,7 +32,10 @@ namespace AplicacionPelicula
                 options.UseInMemoryDatabase("AppDb");
             });//appdbcontext registrado usando una base de datos en memoria
 
-            builder.Services.AddScoped(sp => new HttpClient());//registo httpclient
+            builder.Services.AddScoped(sp => new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7026/")
+            });//registo httpclient
 
             //registrar servicios
             builder.Services.AddDbContext<AppDbContext>();

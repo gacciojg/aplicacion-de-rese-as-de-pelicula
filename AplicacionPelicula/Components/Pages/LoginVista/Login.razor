@@ -123,38 +123,43 @@
     </div>
 
     <button class="btn btn-primary" @onclick="LoginUsuario">Ingresar</button>
-    <button class="btn btn-secondary">Registrarse</button>
+    <button class="btn btn-secondary" @onclick="IrRegistro">Registrarse</button>
 
     <p class="text-danger">@mensajeError</p>
 </div>
 @code {
-	private string username = string.Empty;
-	private string password = string.Empty;
-	private string mensajeError = string.Empty;
+    private string username = string.Empty;
+    private string password = string.Empty;
+    private string mensajeError = string.Empty;
 
-	private async Task LoginUsuario()
-	{
-		mensajeError = string.Empty;//limpia mensajes anteriores 
+    private async Task LoginUsuario()
+    {
+        mensajeError = string.Empty;//limpia mensajes anteriores 
 
-		var (exito, mensaje, usuario) = await LoginService.validarUsuario(username, password);//es el punto de conexion entre la ui y la autenticacion
+        var (exito, mensaje, usuario) = await LoginService.validarUsuario(username, password);//es el punto de conexion entre la ui y la autenticacion
 
-		if (exito && usuario != null)
-		{
-			if(usuario.Rol == "Administrador")
-			{
-				Navigation.NavigateTo("/menu");//si esta bien, se reedirige al menu
-			} else if(usuario.Rol == "Usuario")
-			{
-				Navigation.NavigateTo("/gestionReseñas");
-			}
-			else
-			{
-				mensajeError = "no tienes permiso para acceder";
-			}
-		}
-		else
-		{
-			mensajeError = "usuario o contraseña incorrectos";
-		}
-	}
+        if (exito && usuario != null)
+        {
+            if(usuario.Rol == "Administrador")
+            {
+                Navigation.NavigateTo("/menu");//si esta bien, se reedirige al menu
+            } else if(usuario.Rol == "Usuario")
+            {
+                Navigation.NavigateTo("/gestionReseñas");
+            }
+            else
+            {
+                mensajeError = "no tienes permiso para acceder";
+            }
+        }
+        else
+        {
+            mensajeError = "usuario o contraseña incorrectos";
+        }
+    }
+
+    private void IrRegistro()
+    {
+        Navigation.NavigateTo("/Registro");
+    }
 }
