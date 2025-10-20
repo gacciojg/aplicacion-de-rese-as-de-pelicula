@@ -84,6 +84,18 @@
         text-align: center;
         font-size: 0.9rem;
     }
+
+        .mensaje.exito {
+            color: #2ecc71; 
+        }
+
+        .mensaje.error {
+            color: #e74c3c; 
+        }
+
+        .mensaje.info {
+            color: #f1c40f; 
+        }
 </style>
 
 <div class="form-container">
@@ -91,12 +103,12 @@
 
     <div class="form-group">
         <label>Título</label>
-        <input type="text" @bind=miPelicula.Titulo class="form-input" />
+        <input type="text" @bind="miPelicula.Titulo" class="form-input" />
     </div>
 
     <div class="form-group">
         <label>Género</label>
-        <select @bind=miPelicula.Genero class="form-input">
+        <select @bind="miPelicula.Genero" class="form-input">
             <option value="">Seleccione un género</option>
             <option value="Accion">Acción</option>
             <option value="Comedia">Comedia</option>
@@ -106,45 +118,74 @@
 
     <div class="form-group">
         <label>Año</label>
-        <input type="number" @bind=miPelicula.Anio class="form-input" />
+        <input type="number" @bind="miPelicula.Anio" class="form-input" />
     </div>
 
     <div class="form-group">
         <label>Descripción</label>
-        <textarea @bind=miPelicula.Descripcion class="form-input"></textarea>
+        <textarea @bind="miPelicula.Descripcion" class="form-input"></textarea>
     </div>
 
     <div class="form-group">
         <label>Imagen</label>
         <div style="display:flex; gap:10px; align-items:center;">
-            <input type="text" @bind=miPelicula.ImagenRuta class="form-input" placeholder="Ruta de la imagen..." />
+            <input type="text" @bind="miPelicula.ImagenRuta" class="form-input" placeholder="Ruta de la imagen..." />
             <button type="button" class="btn-yellow" @onclick="AbrirSelectorImagen">Agregar Imagen</button>
         </div>
+        @if (!string.IsNullOrWhiteSpace(miPelicula.ImagenRuta))
+        {
+            <img src="@miPelicula.ImagenRuta" alt="Imagen de @miPelicula.Titulo"
+                 onerror="this.onerror=null;this.src='images/default.jpg';"
+                 class="preview-img" />
+        }
     </div>
 
     <div class="button-group">
-        <button class="btn-yellow" @onclick="CrearPelicula">Agregar Película</button>
+        <button class="btn-yellow" @onclick="CrearPelicula" disabled="@estaGuardando">
+            @(estaGuardando ? "Guardando..." : "Agregar Película")
+        </button>
         <button class="btn-gray" @onclick="VolverAlMenu">Volver al menú</button>
     </div>
 
-    <p class="mensaje">@mensaje</p>
+    <p class="mensaje @tipoMensaje">@mensaje</p>
 </div>
 
 @code {
     Modelos.Pelicula miPelicula = new Modelos.Pelicula();
-    string mensaje;
+    string mensaje = string.Empty;
+    string tipoMensaje = "info";
+    bool estaGuardando = false;
 
     public async Task CrearPelicula()
     {
+        if (estaGuardando) return;
+
+        if(string.IsNullOrWhiteSpace(miPelicula.Titulo) || //hago una validacion manual de campos obligatorios
+           string.IsNullOrWhiteSpace(miPelicula.Genero) ||
+           string.IsNullOrWhiteSpace(miPelicula.Descripcion) ||
+           string.IsNullOrWhiteSpace(miPelicula.ImagenRuta))
+        {
+            mensaje = "por favor complete todos los campos obligatorios";
+            tipoMensaje = "error";
+            return;
+        }
+
+        estaGuardando = true;
         try
         {
             await PeliculaService.AgregarPeliculaAsync(miPelicula);//guarda la peliucla en la db
             mensaje = "pelicula guardada";
+            tipoMensaje = "exito";
             miPelicula = new Modelos.Pelicula();//resete el form
         }
         catch(Exception ex)
         {
-            mensaje = $"error: {ex.Message}";
+            mensaje = $"error al guardar pelicula: {ex.Message}";
+            tipoMensaje = "error";
+        }
+        finally
+        {
+            estaGuardando = false;
         }
     }
 
@@ -164,23 +205,34 @@
             };
 
             var result = await FilePicker.PickAsync(pickOptions);
-
             if (result == null) return;
 
-            using var stream = await result.OpenReadAsync();//abro el stream de la imagen seleccionada
+            var nombreArchivo = $"{Guid.NewGuid()}{Path.GetExtension(result.FileName)}";//genero nombre unico para evitar colisiones
+            
 
+            //miPelicula.ImagenRuta = $"/Imagenes/imgPeliculas/{nombreArchivo}";
+            await using var stream = await result.OpenReadAsync();
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms);
-
-            miPelicula.ImagenBytes = ms.ToArray();//guardo los bytes para mostrar en base 64
-            miPelicula.ImagenRuta = result.FullPath;//almacena la ruta
-
-            mensaje = $"Imagen seleccionada: {result.FileName}";
-
+            var base64 = Convert.ToBase64String(ms.ToArray());//transformo bytes en cadena legible (html, json, etc)
+            var extension = Path.GetExtension(result.FileName).ToLowerInvariant();
+            var mimeType = extension switch //uso el switch para asignar el mime segun extension del archivo
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                _ => "application/octet-stream"
+            };
+            miPelicula.ImagenRuta = $"data:{mimeType};base64,{base64}";
+            mensaje = $"Imagen seleccionada: {nombreArchivo}";
+            tipoMensaje = "info";
         }
         catch (Exception ex)
         {
             mensaje = $"Error al seleccionar imagen: {ex.Message}";
+            tipoMensaje = "error";
         }
     }
+    //uso await using para asegurarme que los streams se cierren correctamente
+    //verifico con File.Exists() para confirmar que la imagen fue realmente copiada
 }

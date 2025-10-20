@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Data.Common;
@@ -32,15 +33,15 @@ namespace AplicacionPelicula
                 options.UseInMemoryDatabase("AppDb");
             });//appdbcontext registrado usando una base de datos en memoria
 
-            builder.Services.AddScoped(sp => new HttpClient
+            builder.Services.AddHttpClient<ReseniaService>(client =>
             {
-                BaseAddress = new Uri("https://localhost:7026/")
+                client.BaseAddress = new Uri("https://localhost:7026/");
             });//registo httpclient
 
             //registrar servicios
             builder.Services.AddDbContext<AppDbContext>();
             builder.Services.AddScoped<PeliculaService>();
-            builder.Services.AddScoped<ReseniaService>();
+            //builder.Services.AddScoped<ReseniaService>(); 
             builder.Services.AddScoped<UsuarioService>();
             builder.Services.AddScoped<LoginService>();
             return builder.Build();

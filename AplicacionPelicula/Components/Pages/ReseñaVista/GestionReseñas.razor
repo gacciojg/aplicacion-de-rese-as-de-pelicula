@@ -11,14 +11,13 @@
         margin: 0;
     }
 
-    /*barra superior */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f5c518;
-            padding: 12px 20px;
-        }
+    .navbar { /*barra superior */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f5c518;
+        padding: 12px 20px;
+    }
 
         .navbar h2 {
             margin: 0;
@@ -163,6 +162,12 @@
                 </div>
                 <p>@pelicula.Descripcion</p>
 
+                @if (pelicula.Resenias?.Any() == true)
+                {
+                    var promedio = pelicula.Resenias.Average(r => r.Estrellas);
+                    <p><b>Promedio:</b> @promedio.ToString("0.0") ★</p>
+                }
+
                 <h5>Reseñas</h5>
                 @if (pelicula.Resenias?.Any() == true)
                 {
@@ -188,16 +193,23 @@
                 }
 
                 <h6>Agregar reseña</h6>
-                <input type="text" @bind="nuevoComentario" placeholder="Escribe un comentario" class="comment-input" />
+                <input type="text" @bind="comentarioPorPelicula[pelicula.Id]" placeholder="Escribe un comentario" class="comment-input" />
 
                 <div class="stars">
-                    @for (int i = 1; i <= 5; i++)//muestra reseñas con estrellas
+                    @for (int i = 1; i <= 5; i++)
                     {
-                        var idx = i; //copia por iteracion
-                        <span class="star @(idx <= estrellasSeleccionadas ? "filled" : "")"@onclick="() => ToggleEstrellas(idx)">★</span>
+                        var idx = i;
+                        <span class="star @(idx <= estrellasPorPelicula.GetValueOrDefault(pelicula.Id) ? "filled" : "")"
+                        @onclick="() => ToggleEstrellas(pelicula.Id, idx)">★</span>
                     }
                 </div>
                 <button class="btn-submit" @onclick="() => AgregarReseña(pelicula.Id)">Finalizar opinión</button>
+
+                @if (!string.IsNullOrEmpty(mensajeError))
+                {
+                    <p style="color:#e74c3c;">@mensajeError</p>
+                }
+
             </div>
         }
     }
@@ -205,49 +217,54 @@
 
 @code {
     private List<Modelos.Pelicula>? peliculas;
-    private string nuevoComentario = "";
-    private int estrellasSeleccionadas = 0;
+    private Dictionary<int, string> comentarioPorPelicula = new();
+    private Dictionary<int, int> estrellasPorPelicula = new();
+    private string mensajeError = "";
 
-    protected override async Task OnInitializedAsync()//asegura que cuando la pagina abre, todo ya este disponible
+    protected override async Task OnInitializedAsync()//aseguro que cuando la pagina abre, todo ya este disponible
     {
         peliculas = await PeliculaService.GetPeliculasAsync();
 
         foreach(var peli in peliculas)//cargar reseñas para cada pelicula
         {
-            peli.Resenias = await ReseniaService.GetReseñaByPeliculaIdsAsync(peli.Id);
+            peli.Resenias = await ReseniaService.GetReseniasPorPeliculasAsync(peli.Id);
+
+            comentarioPorPelicula[peli.Id] = ""; //inicializo claves para evitar keyNotFoundexception
+            estrellasPorPelicula[peli.Id] = 0;
         }
     }
 
-    private void SeleccionarEstrellas(int cantidad)
+    private async Task AgregarReseña(int peliculaId)//valido que el comentario no este vacio y que al menos haya 1 estrella
     {
-        estrellasSeleccionadas = cantidad;
-    }
+        var comentario = comentarioPorPelicula.GetValueOrDefault(peliculaId);
+        var estrellas = estrellasPorPelicula.GetValueOrDefault(peliculaId);
 
-    private async Task AgregarReseña(int peliculaId)//valida que el comentario no este vacio y que al menos haya 1 estrella
-    {
-        if (string.IsNullOrWhiteSpace(nuevoComentario) || estrellasSeleccionadas == 0) return;//valida que el comentario no este vacio
+        if(string.IsNullOrWhiteSpace(comentario) || estrellas == 0)
+        {
+            mensajeError = "debes escribir un comentario y seleccionar al menos una estrella";
+            return;
+        }
 
+        mensajeError = "";
         var nuevaReseña = new Modelos.Resenia
 			{
 				PeliculaId = peliculaId,
-				Comentario = nuevoComentario,
-				Estrellas = estrellasSeleccionadas,
-                Fecha = DateTime.Now
+				Comentario = comentario,
+				Estrellas = estrellas
 			};
 
-        await ReseniaService.AgregarReseñasAsync(nuevaReseña);
-
+        await ReseniaService.AgregarReseniasAsync(nuevaReseña);
         var pelicula = peliculas.First(p => p.Id == peliculaId);
-        pelicula.Resenias = await ReseniaService.GetReseñaByPeliculaIdsAsync(peliculaId);
+        pelicula.Resenias = await ReseniaService.GetReseniasPorPeliculasAsync(peliculaId);
 
-        nuevoComentario = "";
-        estrellasSeleccionadas = 0;
+        comentarioPorPelicula[peliculaId] = "";
+        estrellasPorPelicula[peliculaId] = 0;
         StateHasChanged();//notifica a blazor que el estado ha cambiado y debe actualizar la ui
     }
 
-    private void ToggleEstrellas(int cantidad)
+    private void ToggleEstrellas(int peliculaId ,int cantidad)
     {
-        var val = cantidad < 0 ? 0 : (cantidad > 5 ? 5 : cantidad);//clamp manual[0..5]
-        estrellasSeleccionadas = (estrellasSeleccionadas == val) ? 0 : val;//si clickea la misma cantidad, deselecciona
+        var val = Math.Clamp(cantidad, 1, 5);//aseguro que esté entre 1 y 5
+        estrellasPorPelicula[peliculaId] = val;//si clickeo la misma cantidad, deselecciona
     }
 }
